@@ -1,7 +1,28 @@
-body {
-    background-color: #f4f7f6;
-    font-family: "Segoe UI", Arial, sans-serif;
+/* Estilos personalizados para el formulario de login */
+.card {
+    transition: all 0.3s ease;
 }
-h1, h4 {
-    font-weight: bold;
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.form-control-lg:focus {
+    box-shadow: 0 0 0 0.25rem rgba(59, 89, 152, 0.25);
+    border-color: #1e3c72;
+}
+
+.btn-primary {
+    background-color: #1e3c72;
+    border-color: #1e3c72;
+}
+
+.btn-primary:hover {
+    background-color: #0d2c62;
+    border-color: #0d2c62;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
