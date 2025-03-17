@@ -222,4 +222,4 @@ def toggle_navbar_collapse(n, is_open):
 
 # 🚀 Ejecutar la aplicación
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8060)  # Cambiado de 8050 a 8060
