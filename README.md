@@ -1,17 +1,20 @@
-# Tarea_M9_MPAD_Carpenco_Agustin# Dashboard Deportivo con Dash y Plotly
+# Dashboard Deportivo con Dash y Plotly
 
 ## Descripción
 
-Una aplicación web interactiva desarrollada con Dash y Plotly para visualizar y analizar datos deportivos. Esta herramienta permite a entrenadores, analistas y staff técnico acceder a métricas de rendimiento y datos GPS de los atletas a través de una interfaz intuitiva y segura.
+Una aplicación web interactiva desarrollada con Dash y Plotly para visualizar y analizar datos GPS de rendimiento deportivo. Esta herramienta permite a entrenadores, analistas y staff técnico acceder a métricas de rendimiento de los atletas a través de una interfaz intuitiva, interactiva y segura.
 
-## Características
+## Características Principales
 
-- **Sistema de autenticación**: Login seguro con Flask-Login
-- **Dashboard de rendimiento**: Visualización de métricas clave de los jugadores
-- **Análisis GPS**: Datos de tracking, distancias, velocidades y zonas de intensidad
-- **Visualizaciones interactivas**: Gráficos dinámicos con Plotly
-- **Diseño responsive**: Adaptable a diferentes dispositivos
-- **Exportación de informes**: Generación de reportes en formato PDF
+- **Sistema de autenticación**: Login seguro con Flask-Login (usuario: admin, contraseña: admin)
+- **Filtros interactivos y dependientes**: Selección por división, equipo, posición y jugador
+- **Dashboard de rendimiento**: Visualizaciones avanzadas de métricas deportivas:
+  - Perfil de rendimiento en formato radar
+  - Relación distancia vs velocidad
+  - Comparativa por posición
+- **Visualización de KPIs**: Indicadores clave como número de jugadores, distancia promedio y velocidad máxima
+- **Diseño responsive**: Interfaz adaptable a diferentes dispositivos
+- **Experiencia de usuario optimizada**: Filtros conectados que evitan selecciones incompatibles
 
 ## Tecnologías utilizadas
 

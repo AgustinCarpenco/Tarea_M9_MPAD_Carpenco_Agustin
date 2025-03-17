@@ -1,0 +1,4 @@
+/* Asegura que los menús desplegables aparezcan por encima de otros elementos */
+.dash-dropdown .Select-menu-outer {
+    z-index: 1000 !important;
+  }
