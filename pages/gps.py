@@ -126,64 +126,70 @@ layout = dbc.Container([
     ]),
     
     # Panel de filtros
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardHeader("Filtros"),
-                dbc.CardBody([
-                    dbc.Row([
-                        # Filtro de divisiones
-                        dbc.Col([
-                            html.Label("División:"),
-                            dcc.Dropdown(
-                                id="division-filter-gps", 
-                                placeholder="Seleccionar División"
-                            )
-                        ], md=3),
-                        
-                        # Filtro de equipos
-                        dbc.Col([
-                            html.Label("Equipo:"),
-                            dcc.Dropdown(
-                                id="team-filter-gps", 
-                                placeholder="Seleccionar Equipo"
-                            )
-                        ], md=3),
-                        
-                        # Filtro de posiciones
-                        dbc.Col([
-                            html.Label("Posición:"),
-                            dcc.Dropdown(
-                                id="position-filter-gps", 
-                                placeholder="Seleccionar Posición"
-                            )
-                        ], md=3),
-                        
-                        # Filtro de jugadores
-                        dbc.Col([
-                            html.Label("Jugador:"),
-                            dcc.Dropdown(
-                                id="player-filter-gps", 
-                                placeholder="Seleccionar Jugador"
-                            )
-                        ], md=3)
-                    ]),
-                    dbc.Row([
-                        # Botón para exportar a PDF
-                        dbc.Col([
-                            dbc.Button(
-                                [html.I(className="fas fa-file-pdf me-2"), "Exportar a PDF"],
-                                id="export-pdf-gps-btn",
-                                color="danger",
-                                className="w-100 mt-3"
-                            ),
-                            dcc.Download(id="download-pdf-gps")
-                        ], width={"size": 3, "offset": 9})
-                    ], className="mt-3")
-                ])
-            ], className="mb-4")
+    html.Div([
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader("Filtros"),
+                    dbc.CardBody([
+                        dbc.Row([
+                            # Filtro de divisiones
+                            dbc.Col([
+                                html.Label("División:"),
+                                dcc.Dropdown(
+                                    id="division-filter-gps", 
+                                    placeholder="Seleccionar División",
+                                    className="dropdown-filter"
+                                )
+                            ], md=3),
+                            
+                            # Filtro de equipos
+                            dbc.Col([
+                                html.Label("Equipo:"),
+                                dcc.Dropdown(
+                                    id="team-filter-gps", 
+                                    placeholder="Seleccionar Equipo",
+                                    className="dropdown-filter"
+                                )
+                            ], md=3),
+                            
+                            # Filtro de posiciones
+                            dbc.Col([
+                                html.Label("Posición:"),
+                                dcc.Dropdown(
+                                    id="position-filter-gps", 
+                                    placeholder="Seleccionar Posición",
+                                    className="dropdown-filter"
+                                )
+                            ], md=3),
+                            
+                            # Filtro de jugadores
+                            dbc.Col([
+                                html.Label("Jugador:"),
+                                dcc.Dropdown(
+                                    id="player-filter-gps", 
+                                    placeholder="Seleccionar Jugador",
+                                    className="dropdown-filter"
+                                )
+                            ], md=3)
+                        ]),
+                        dbc.Row([
+                            # Botón para exportar a PDF
+                            dbc.Col([
+                                dbc.Button(
+                                    [html.I(className="fas fa-file-pdf me-2"), "Exportar a PDF"],
+                                    id="export-pdf-gps-btn",
+                                    color="danger",
+                                    className="w-100 mt-3"
+                                ),
+                                dcc.Download(id="download-pdf-gps")
+                            ], width={"size": 3, "offset": 9})
+                        ], className="mt-3")
+                    ])
+                ], className="mb-4")
+            ])
         ])
-    ]),
+    ], style={"position": "relative", "zIndex": "1000"}),
     
     # Almacenamiento de datos filtrados
     dcc.Store(id='filtered-data-gps'),
@@ -377,7 +383,8 @@ def actualizar_datos_gps(division, team, position, player):
             ], md=12)
         ]
         
-        return None, empty_fig, empty_fig, empty_kpis, [], []
+        # Importante: Asegurarse de que todos los outputs son del tipo correcto
+        return "", empty_fig, empty_fig, empty_kpis, [], []  # Cadena vacía en lugar de None para data
     
     # Filtrar datos
     filtered_df = filtrar_dataframe_gps(df, division, team, position, player)
@@ -459,8 +466,8 @@ def actualizar_datos_gps(division, team, position, player):
         table_data = table_df.to_dict('records')
         table_columns = [{"name": col, "id": col} for col in table_df.columns]
     
-    # Devolver todos los outputs
-    return filtered_df.to_json(date_format='iso', orient='split'), velocidad_fig, player_load_fig, kpi_cards, table_data, table_columns
+    # Devolver todos los outputs asegurando que ninguno es None o un objeto no serializable
+    return filtered_df.to_json(date_format='iso', orient='split'), velocidad_fig, player_load_fig, kpi_cards, table_data if table_data else [], table_columns if table_columns else []
 
 # Callback para exportar a PDF
 @callback(
@@ -612,3 +619,20 @@ def exportar_pdf_gps(n_clicks, json_data, division, team, position, player):
             filename=filename,
             type="text/plain"
         )
+    
+# Al final de app.py
+if __name__ == '__main__':
+    import socket
+    
+    def is_port_in_use(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(('localhost', port)) == 0
+    
+    # Intentar puertos 8060, 8061, 8062 o cualquier disponible
+    port = 8060
+    while is_port_in_use(port) and port < 8070:
+        print(f"Puerto {port} ocupado, intentando {port + 1}")
+        port += 1
+    
+    print(f"Iniciando aplicación en puerto {port}")
+    app.run_server(debug=True, port=port)

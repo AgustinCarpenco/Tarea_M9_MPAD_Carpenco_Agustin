@@ -1,4 +1,27 @@
+/* assets/custom.css */
 /* Asegura que los menús desplegables aparezcan por encima de otros elementos */
 .dash-dropdown .Select-menu-outer {
-    z-index: 1000 !important;
-  }
+  z-index: 1500 !important;
+  position: absolute !important;
+}
+
+.dash-dropdown {
+  position: relative !important;
+}
+
+/* Asegurar que los filtros aparezcan sobre otros elementos */
+.dropdown-filter .VirtualizedSelectFocusedOption {
+  background-color: rgba(30, 60, 114, 0.1);
+}
+
+.dropdown-filter .Select-control {
+  border-color: #dee2e6;
+}
+
+.dropdown-filter .Select-control:hover {
+  border-color: #1e3c72;
+}
+
+.dropdown-filter .is-open > .Select-control {
+  border-color: #1e3c72;
+}
