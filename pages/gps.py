@@ -481,142 +481,282 @@ def actualizar_datos_gps(division, team, position, player):
     prevent_initial_call=True
 )
 def exportar_pdf_gps(n_clicks, json_data, division, team, position, player):
-    if not n_clicks or not json_data:
+    if not n_clicks:
         raise PreventUpdate
     
     try:
-        # Convertir JSON a DataFrame
-        df = pd.read_json(json_data, orient='split')
-        
-        # Importar bibliotecas para PDF
-        from reportlab.lib.pagesizes import letter
-        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-        from reportlab.lib.styles import getSampleStyleSheet
+        import base64
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
         from reportlab.lib import colors
+        from reportlab.lib.units import inch, cm
         
         # Crear buffer para PDF
         buffer = io.BytesIO()
         
-        # Crear documento
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        # Crear documento - usar A4 para mejor presentación
+        doc = SimpleDocTemplate(
+            buffer, 
+            pagesize=A4,
+            leftMargin=1.5*cm,
+            rightMargin=1.5*cm,
+            topMargin=2*cm,
+            bottomMargin=2*cm
+        )
+        
         elements = []
         
-        # Estilos
+        # Definir estilos mejorados
         styles = getSampleStyleSheet()
-        title_style = styles['Heading1']
-        subtitle_style = styles['Heading2']
-        normal_style = styles['Normal']
         
-        # Título
+        # Estilo para título principal
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            textColor=colors.darkblue,
+            spaceAfter=20,
+            alignment=1  # Centrado
+        )
+        
+        # Estilo para subtítulos
+        subtitle_style = ParagraphStyle(
+            'CustomSubtitle',
+            parent=styles['Heading2'],
+            fontSize=16,
+            textColor=colors.darkblue,
+            spaceBefore=15,
+            spaceAfter=10
+        )
+        
+        # Estilo para texto normal
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=10,
+            spaceAfter=8
+        )
+        
+        # Estilo para pies de página e información adicional
+        info_style = ParagraphStyle(
+            'InfoStyle',
+            parent=styles['Italic'],
+            fontSize=8,
+            textColor=colors.darkgrey
+        )
+        
+        # Logo o encabezado del informe (opcional)
+        # Si tienes un logo, podrías incluirlo así:
+        # logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'logo.png')
+        # if os.path.exists(logo_path):
+        #     img = Image(logo_path, width=1.5*inch, height=0.5*inch)
+        #     elements.append(img)
+        
+        # Título con formato mejorado
         elements.append(Paragraph("Informe de Análisis GPS", title_style))
-        elements.append(Spacer(1, 12))
         
-        # Fecha
+        # Línea horizontal después del título
+        elements.append(Spacer(1, 1))
+        elements.append(Table([[""]], colWidths=[doc.width], style=TableStyle([
+            ('LINEABOVE', (0, 0), (-1, 0), 1, colors.darkblue),
+        ])))
+        elements.append(Spacer(1, 10))
+        
+        # Fecha del informe con formato mejorado
         fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
         elements.append(Paragraph(f"Generado el: {fecha}", normal_style))
-        elements.append(Spacer(1, 12))
+        elements.append(Spacer(1, 15))
         
-        # Filtros aplicados
-        elements.append(Paragraph("Filtros aplicados:", subtitle_style))
-        filtros = [
-            f"División: {division if division else 'Todas'}",
-            f"Equipo: {team if team else 'Todos'}",
-            f"Posición: {position if position else 'Todas'}",
-            f"Jugador: {player if player else 'Todos'}"
+        # Convertir JSON a DataFrame
+        df = pd.read_json(json_data, orient='split')
+        
+        # Sección de filtros aplicados
+        elements.append(Paragraph("Filtros aplicados", subtitle_style))
+        
+        filtros_data = [
+            ["Filtro", "Valor"],
+            ["División", division if division != "Todas" else "Todas las divisiones"],
+            ["Equipo", team if team != "Todos" else "Todos los equipos"],
+            ["Posición", position if position != "Todas" else "Todas las posiciones"],
+            ["Jugador", player if player != "Todos" else "Todos los jugadores"]
         ]
         
-        for filtro in filtros:
-            elements.append(Paragraph(filtro, normal_style))
+        # Tabla de filtros con estilo mejorado
+        filtros_tabla = Table(filtros_data, colWidths=[3*cm, 12*cm])
+        filtros_tabla.setStyle(TableStyle([
+            # Encabezado
+            ('BACKGROUND', (0, 0), (1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (1, 0), colors.white),
+            ('ALIGN', (0, 0), (1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (1, 0), 8),
+            ('TOPPADDING', (0, 0), (1, 0), 8),
+            
+            # Cuerpo de la tabla
+            ('BACKGROUND', (0, 1), (0, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 1), (0, -1), colors.darkblue),
+            ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+            ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 1), (0, -1), 10),
+            ('VALIGN', (0, 1), (1, -1), 'MIDDLE'),
+            ('GRID', (0, 0), (1, -1), 0.5, colors.grey),
+            ('BOTTOMPADDING', (0, 1), (1, -1), 6),
+            ('TOPPADDING', (0, 1), (1, -1), 6),
+            
+            # Bordes exteriores más gruesos
+            ('BOX', (0, 0), (-1, -1), 1, colors.darkblue)
+        ]))
         
+        elements.append(filtros_tabla)
         elements.append(Spacer(1, 20))
         
-        # Resumen estadístico
-        elements.append(Paragraph("Resumen Estadístico:", subtitle_style))
-        
+        # Estadísticas Básicas
         if not df.empty:
-            # Calcular estadísticas
+            elements.append(Paragraph("Estadísticas Básicas", subtitle_style))
+            
+            # Calcular estadísticas clave
             n_jugadores = df['athlete_name'].nunique()
             max_vel_prom = df['max_vel'].mean()
+            max_vel_max = df['max_vel'].max()
             player_load_prom = df['total_player_load'].mean()
             distance_prom = df['total_distance'].mean()
             
-            data = [
+            # Crear tabla de estadísticas
+            stats_data = [
                 ["Métrica", "Valor"],
-                ["Jugadores", f"{n_jugadores}"],
+                ["Total Jugadores", f"{n_jugadores}"],
                 ["Velocidad Máxima Promedio", f"{max_vel_prom:.2f} km/h"],
+                ["Velocidad Máxima", f"{max_vel_max:.2f} km/h"],
                 ["Player Load Promedio", f"{player_load_prom:.2f}"],
                 ["Distancia Promedio", f"{distance_prom:.2f} m"]
             ]
             
-            tabla = Table(data, colWidths=[250, 200])
-            tabla.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (1, 0), colors.green),
+            # Tabla de estadísticas con estilo mejorado
+            stats_tabla = Table(stats_data, colWidths=[8*cm, 7*cm])
+            stats_tabla.setStyle(TableStyle([
+                # Encabezado
+                ('BACKGROUND', (0, 0), (1, 0), colors.darkblue),
                 ('TEXTCOLOR', (0, 0), (1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ('ALIGN', (0, 0), (1, 0), 'CENTER'),
+                ('FONTNAME', (0, 0), (1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (1, 0), 8),
+                ('TOPPADDING', (0, 0), (1, 0), 8),
+                
+                # Cuerpo de la tabla
+                ('BACKGROUND', (0, 1), (0, -1), colors.lightgrey),
+                ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+                ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+                ('ALIGN', (1, 1), (1, -1), 'CENTER'),
+                ('FONTSIZE', (0, 1), (1, -1), 10),
+                ('VALIGN', (0, 1), (1, -1), 'MIDDLE'),
+                ('GRID', (0, 0), (1, -1), 0.5, colors.grey),
+                ('BOTTOMPADDING', (0, 1), (1, -1), 6),
+                ('TOPPADDING', (0, 1), (1, -1), 6),
+                
+                # Bordes exteriores más gruesos
+                ('BOX', (0, 0), (-1, -1), 1, colors.darkblue)
             ]))
             
-            elements.append(tabla)
+            elements.append(stats_tabla)
             elements.append(Spacer(1, 20))
             
-            # Top jugadores
-            elements.append(Paragraph("Top 10 Jugadores por Velocidad Máxima:", subtitle_style))
+            # Top jugadores por velocidad
+            elements.append(Paragraph("Top 5 Jugadores por Velocidad Máxima", subtitle_style))
             
-            top_jugadores = df.sort_values('max_vel', ascending=False).head(10)
-            top_data = [["Jugador", "Posición", "Vel. Máx (km/h)", "Distancia (m)"]]
+            if len(df) > 0:
+                top_velocidad = df.sort_values('max_vel', ascending=False).head(5)
+                
+                vel_data = [["Jugador", "Posición", "Equipo", "Vel. Máx. (km/h)"]]
+                
+                for _, row in top_velocidad.iterrows():
+                    vel_data.append([
+                        row['athlete_name'],
+                        row['position_name'],
+                        row['team_name'],
+                        f"{row['max_vel']:.2f}"
+                    ])
+                
+                vel_tabla = Table(vel_data, colWidths=[4*cm, 4*cm, 4*cm, 3*cm])
+                vel_tabla.setStyle(TableStyle([
+                    # Encabezado
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                    ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 11),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('TOPPADDING', (0, 0), (-1, 0), 8),
+                    
+                    # Cuerpo de la tabla
+                    ('FONTSIZE', (0, 1), (-1, -1), 9),
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('VALIGN', (0, 1), (-1, -1), 'MIDDLE'),
+                    ('ALIGN', (3, 1), (3, -1), 'CENTER'),
+                    ('BOTTOMPADDING', (0, 1), (-1, -1), 5),
+                    ('TOPPADDING', (0, 1), (-1, -1), 5),
+                    
+                    # Resaltar filas alternadas
+                    ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+                    ('BACKGROUND', (0, 3), (-1, 3), colors.lightgrey),
+                    ('BACKGROUND', (0, 5), (-1, 5), colors.lightgrey),
+                    
+                    # Bordes exteriores más gruesos
+                    ('BOX', (0, 0), (-1, -1), 1, colors.darkblue)
+                ]))
+                
+                elements.append(vel_tabla)
+                elements.append(Spacer(1, 30))
+                
+            # Conclusiones y notas (opcional)
+            elements.append(Paragraph("Observaciones", subtitle_style))
+            observaciones = [
+                "• Los datos presentados en este informe corresponden a las métricas GPS recopiladas durante el período analizado.",
+                "• Las velocidades máximas y distancias pueden variar según la posición y rol de cada jugador.",
+                "• Se recomienda revisar estos datos en conjunto con los análisis técnicos y tácticos del equipo."
+            ]
             
-            for _, row in top_jugadores.iterrows():
-                top_data.append([
-                    row['athlete_name'],
-                    row['position_name'],
-                    f"{row['max_vel']:.2f}",
-                    f"{row['total_distance']:.2f}"
-                ])
+            for observacion in observaciones:
+                elements.append(Paragraph(observacion, normal_style))
+                
+            # Pie de página
+            elements.append(Spacer(1, 30))
+            elements.append(Table([[""]], colWidths=[doc.width], style=TableStyle([
+                ('LINEABOVE', (0, 0), (-1, 0), 0.5, colors.grey),
+            ])))
+            elements.append(Spacer(1, 5))
+            elements.append(Paragraph("Dashboard Deportivo - Análisis GPS - Documento generado automáticamente", info_style))
             
-            top_tabla = Table(top_data, colWidths=[150, 120, 120, 120])
-            top_tabla.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.green),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
-            ]))
-            
-            elements.append(top_tabla)
         else:
             elements.append(Paragraph("No hay datos disponibles con los filtros seleccionados.", normal_style))
         
         # Construir el PDF
         doc.build(elements)
         
-        # Obtener el contenido del buffer
-        pdf = buffer.getvalue()
-        buffer.close()
+        # Obtener el contenido del buffer y codificarlo en base64
+        buffer.seek(0)
+        pdf_bytes = buffer.getvalue()
+        pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
         
         # Crear nombre de archivo
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"informe_gps_{timestamp}.pdf"
         
         return dict(
-            content=pdf,
+            content=pdf_base64,
             filename=filename,
-            type="application/pdf"
+            type="application/pdf",
+            base64=True
         )
         
     except Exception as e:
         print(f"Error al generar PDF: {e}")
-        # En caso de error, crear un PDF simple con mensaje de error
-        buffer = io.BytesIO()
-        buffer.write(f"Error al generar PDF: {str(e)}".encode())
-        buffer.seek(0)
-        
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"error_gps_{timestamp}.txt"
-        
+        # En caso de error, devolver un mensaje de texto
         return dict(
-            content=buffer.getvalue(),
-            filename=filename,
+            content="Error al generar el PDF. Por favor, intente nuevamente.",
+            filename="error.txt",
             type="text/plain"
         )
     
