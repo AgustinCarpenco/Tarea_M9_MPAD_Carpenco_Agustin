@@ -9,6 +9,9 @@ from dash.exceptions import PreventUpdate
 import os
 from datetime import datetime
 import io
+from utils.ollama_integration import OllamaAnalysis
+from dash.dependencies import Input, Output, State, ALL, MATCH
+import asyncio
 
 # Registrar esta página
 dash.register_page(
@@ -220,7 +223,7 @@ layout = dbc.Container([
         ], md=6, className="mb-4")
     ]),
     
-    # Tabla de jugadores
+    # Tabla de jugadores - AÑADIR ESTE BLOQUE QUE FALTABA
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -242,6 +245,32 @@ layout = dbc.Container([
                         sort_mode="multi",
                         page_size=10
                     )
+                ])
+            ])
+        ], md=12, className="mb-4")
+    ]),
+    
+    # Análisis IA
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader([
+                    html.H5("Análisis IA", className="d-inline"),
+                    dbc.Button(
+                        [html.I(className="fas fa-robot me-2"), "Generar Análisis"],
+                        id="generate-analysis-btn",
+                        color="info",
+                        className="float-end"
+                    )
+                ]),
+                dbc.CardBody([
+                    html.Div([
+                        html.Div(id="analysis-loading", className="text-center", children=[
+                            dbc.Spinner(size="sm", color="primary", type="grow"),
+                            " Generando análisis... Por favor espere."
+                        ], style={"display": "none"})
+                    ]),
+                    html.Div(id="analysis-content", className="mt-3")
                 ])
             ])
         ], md=12, className="mb-4")
@@ -759,7 +788,119 @@ def exportar_pdf_gps(n_clicks, json_data, division, team, position, player):
             filename="error.txt",
             type="text/plain"
         )
+
+# Callback para generar el análisis con Ollama
+@callback(
+    [Output("analysis-loading", "style"),
+     Output("analysis-content", "children")],
+    [Input("generate-analysis-btn", "n_clicks")],
+    [State("filtered-data-gps", "data")],
+    prevent_initial_call=True
+)
+async def generate_analysis(n_clicks, json_data):
+    """Genera un análisis de los datos utilizando Ollama."""
+    if not n_clicks or not json_data:
+        raise PreventUpdate
     
+    # Mostrar indicador de carga
+    loading_style = {"display": "block"}
+    
+    try:
+        # Convertir JSON a DataFrame
+        df = pd.read_json(json_data, orient='split')
+        
+        if df.empty:
+            return {"display": "none"}, html.Div("No hay datos disponibles para analizar.", className="text-muted")
+        
+        # Crear instancia de OllamaAnalysis
+        ollama = OllamaAnalysis(model="deepseek-r1:8b")
+        
+        # Obtener análisis general
+        general_analysis = await ollama.analyze_data(df, analysis_type="general")
+        
+        # Formatear análisis como componentes de Dash
+        analysis_content = [
+            html.H6("Análisis General", className="text-info mt-3"),
+            html.Div([
+                dcc.Markdown(general_analysis, className="analysis-text")
+            ], className="p-3 border rounded bg-light"),
+            
+            # Botones para análisis específicos
+            html.Div([
+                dbc.Button(
+                    "Análisis de Velocidad",
+                    id={"type": "specific-analysis-btn", "index": "velocidad"},
+                    color="outline-primary",
+                    size="sm",
+                    className="me-2 mt-3"
+                ),
+                dbc.Button(
+                    "Análisis de Distancia",
+                    id={"type": "specific-analysis-btn", "index": "distancia"},
+                    color="outline-primary",
+                    size="sm",
+                    className="me-2 mt-3"
+                )
+            ]),
+            
+            # Contenedor para análisis específicos
+            html.Div(id="specific-analysis-container", className="mt-3")
+        ]
+        
+        return {"display": "none"}, analysis_content
+    
+    except Exception as e:
+        print(f"Error al generar análisis: {e}")
+        return {"display": "none"}, html.Div([
+            html.Div("Error al generar el análisis.", className="text-danger"),
+            html.Div(f"Detalles: {str(e)}", className="text-muted small")
+        ])
+
+# Callback para análisis específicos
+@callback(
+    Output("specific-analysis-container", "children"),
+    [Input({"type": "specific-analysis-btn", "index": ALL}, "n_clicks")],
+    [State({"type": "specific-analysis-btn", "index": ALL}, "id"),
+     State("filtered-data-gps", "data")],
+    prevent_initial_call=True
+)
+async def generate_specific_analysis(n_clicks_list, btn_ids, json_data):
+    """Genera análisis específicos basados en el botón clickeado."""
+    ctx_triggered = ctx.triggered_id
+    if not ctx_triggered or not any(n_clicks_list) or not json_data:
+        raise PreventUpdate
+    
+    # Determinar qué botón fue clickeado
+    triggered_index = ctx_triggered.get("index", "")
+    
+    try:
+        # Convertir JSON a DataFrame
+        df = pd.read_json(json_data, orient='split')
+        
+        if df.empty:
+            return html.Div("No hay datos disponibles para analizar.", className="text-muted")
+        
+        # Crear instancia de OllamaAnalysis
+        ollama = OllamaAnalysis(model="deepseek-r1:8b")
+        
+        # Generar análisis específico
+        specific_analysis = await ollama.analyze_data(df, analysis_type=triggered_index)
+        
+        # Formatear el resultado
+        return html.Div([
+            html.H6(f"Análisis de {triggered_index.capitalize()}", className="text-info mt-3"),
+            html.Div([
+                dcc.Markdown(specific_analysis, className="analysis-text")
+            ], className="p-3 border rounded bg-light")
+        ])
+    
+    except Exception as e:
+        print(f"Error al generar análisis específico: {e}")
+        return html.Div([
+            html.Div(f"Error al generar el análisis de {triggered_index}.", className="text-danger"),
+            html.Div(f"Detalles: {str(e)}", className="text-muted small")
+        ])
+        
 # Al final de app.py
 if __name__ == '__main__':
     import socket
