@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>documentacion.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="documentaci%C3%B3n-del-dashboard-deportivo">Documentación del Dashboard Deportivo</h1>
+<h2 id="capturas-de-pantalla">Capturas de pantalla</h2>
+<h3 id="p%C3%A1gina-de-login">Página de Login</h3>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/login.jpeg" alt="Login"></p>
+<p><em>Página de login con validación de usuario y contraseña. Acceso con usuario: admin, contraseña: admin.</em></p>
+<h3 id="home">Home</h3>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/home.jpeg" alt="Home"></p>
+<p><em>Página principal con navegación a las diferentes secciones del dashboard.</em></p>
+<h3 id="dashboard-de-performance">Dashboard de Performance</h3>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/performance1.jpeg" alt="Performance - Vista principal"></p>
+<p><em>Dashboard de rendimiento deportivo con múltiples gráficos interactivos y sistema de filtrado.</em></p>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/performance2.jpeg" alt="Performance - Sección inferior"></p>
+<p><em>Tabla de datos y sección de análisis IA en el dashboard de performance.</em></p>
+<h3 id="dashboard-de-gps">Dashboard de GPS</h3>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/gps1.jpeg" alt="GPS - Vista principal"></p>
+<p><em>Dashboard de análisis GPS con visualización de métricas de velocidad y distancia.</em></p>
+<p><img src="file:///Users/agustin/Documents/Agustin_2025/Master en Python/Modulo_9/Tarea/Tarea_M9_MPAD_Carpenco_Agustin/imagenes/gps2.jpeg" alt="GPS - Sección inferior"></p>
+<p><em>Tabla de datos detallados y análisis en el dashboard de GPS.</em></p>
+<h2 id="funcionalidades-implementadas">Funcionalidades implementadas</h2>
+<h3 id="sistema-de-autenticaci%C3%B3n">Sistema de Autenticación</h3>
+<ul>
+<li>Implementación de login con usuario y contraseña (admin/admin)</li>
+<li>Gestión de sesiones con Flask-Login</li>
+<li>Protección de rutas que requieren autenticación</li>
+<li>Logout funcional desde el menú desplegable</li>
+</ul>
+<h3 id="navegaci%C3%B3n-y-layout">Navegación y Layout</h3>
+<ul>
+<li>Navbar responsivo con Dash Bootstrap Components</li>
+<li>Sistema de páginas con rutas configuradas</li>
+<li>Diseño consistente en todas las páginas</li>
+<li>Implementación de estilos personalizados</li>
+</ul>
+<h3 id="dashboard-de-performance">Dashboard de Performance</h3>
+<ul>
+<li>Filtros interactivos por división, equipo, posición y jugador</li>
+<li>Gráfico de evolución temporal de métricas seleccionadas</li>
+<li>Gráfico comparativo por posición</li>
+<li>Perfil de rendimiento en formato radar</li>
+<li>Mapa de calor de correlaciones entre métricas</li>
+<li>Tabla de datos con ordenamiento y filtrado</li>
+<li>Exportación a PDF con diseño personalizado</li>
+<li>Análisis IA mediante integración con Ollama</li>
+</ul>
+<h3 id="dashboard-de-gps">Dashboard de GPS</h3>
+<ul>
+<li>Filtros específicos para datos GPS</li>
+<li>Visualización de velocidad máxima por posición</li>
+<li>Análisis de Player Load</li>
+<li>KPIs destacados en tarjetas</li>
+<li>Tabla de datos detallados</li>
+<li>Exportación a PDF con análisis</li>
+</ul>
+<h3 id="interactividad-y-datos">Interactividad y Datos</h3>
+<ul>
+<li>Callbacks para actualización de filtros dependientes</li>
+<li>Manejo de errores y estados de carga</li>
+<li>Función para generar datos de ejemplo si no existen archivos</li>
+<li>Uso de dcc.Store para almacenar datos filtrados</li>
+</ul>
+<h2 id="desaf%C3%ADos-encontrados-y-soluciones">Desafíos encontrados y soluciones</h2>
+<h3 id="desaf%C3%ADo-1-integraci%C3%B3n-de-flask-login-con-dash">Desafío 1: Integración de Flask-Login con Dash</h3>
+<ul>
+<li><strong>Problema</strong>: Flask-Login requiere sesiones Flask mientras que Dash tiene su propio sistema de routing</li>
+<li><strong>Solución</strong>: Implementación de callbacks para manejar el estado de login/logout y uso de dcc.Store para mantener el estado de sesión en el cliente</li>
+</ul>
+<h3 id="desaf%C3%ADo-2-filtros-dependientes">Desafío 2: Filtros dependientes</h3>
+<ul>
+<li><strong>Problema</strong>: Los filtros debían actualizarse dependiendo de las selecciones previas</li>
+<li><strong>Solución</strong>: Implementación de callbacks en cadena con prevención de llamadas iniciales</li>
+</ul>
+<h3 id="desaf%C3%ADo-3-exportaci%C3%B3n-a-pdf">Desafío 3: Exportación a PDF</h3>
+<ul>
+<li><strong>Problema</strong>: La generación de PDF completos con gráficos y análisis</li>
+<li><strong>Solución</strong>: Uso de ReportLab para crear informes personalizados con datos filtrados</li>
+</ul>
+<h3 id="desaf%C3%ADo-4-integraci%C3%B3n-con-ia">Desafío 4: Integración con IA</h3>
+<ul>
+<li><strong>Problema</strong>: Conexión con servicio externo para análisis</li>
+<li><strong>Solución</strong>: Implementación de una capa de abstracción en utils/ollama_integration.py y manejo de fallback con análisis automáticos</li>
+</ul>
+<h2 id="decisiones-de-dise%C3%B1o-tomadas">Decisiones de diseño tomadas</h2>
+<h3 id="arquitectura">Arquitectura</h3>
+<ul>
+<li><strong>Sistema de páginas</strong>: Uso del sistema de páginas de Dash para mejor organización</li>
+<li><strong>Separación de responsabilidades</strong>: Funciones específicas para cargar datos, filtrar y generar gráficos</li>
+<li><strong>Componentes reutilizables</strong>: Funciones y layouts compartidos entre dashboards</li>
+</ul>
+<h3 id="interfaz-de-usuario">Interfaz de usuario</h3>
+<ul>
+<li><strong>Tema Bootstrap</strong>: Uso de FLATLY para un diseño moderno y profesional</li>
+<li><strong>Iconos FontAwesome</strong>: Mejora de la experiencia visual</li>
+<li><strong>Tarjetas para KPIs</strong>: Visualización rápida de métricas clave</li>
+<li><strong>Filtros colapsables</strong>: Maximización del espacio disponible para visualizaciones</li>
+</ul>
+<h3 id="experiencia-de-usuario">Experiencia de usuario</h3>
+<ul>
+<li><strong>Estados de carga</strong>: Indicadores visuales durante procesamiento</li>
+<li><strong>Mensajes de error</strong>: Información clara cuando no hay datos disponibles</li>
+<li><strong>Tooltips en gráficos</strong>: Información detallada al interactuar con las visualizaciones</li>
+<li><strong>Filtros dependientes</strong>: Actualización automática para evitar selecciones incompatibles</li>
+</ul>
+<h2 id="mejoras-futuras">Mejoras futuras</h2>
+<ol>
+<li><strong>Persistencia de datos</strong>: Implementación de base de datos para almacenamiento persistente</li>
+<li><strong>Módulo de administración</strong>: Gestión de usuarios y permisos</li>
+<li><strong>Personalización de dashboards</strong>: Permitir a los usuarios guardar sus filtros preferidos</li>
+<li><strong>Más visualizaciones</strong>: Mapas de calor de posicionamiento en campo</li>
+<li><strong>Comparativa entre periodos</strong>: Análisis de evolución entre temporadas o periodos específicos</li>
+</ol>
+<h2 id="conclusi%C3%B3n">Conclusión</h2>
+<p>El Dashboard Deportivo desarrollado cumple con todos los requisitos planteados en la tarea del Módulo 9 del Máster en Python Avanzado Aplicado al Deporte. Se ha implementado una aplicación completa con autenticación, múltiples dashboards, visualizaciones interactivas y capacidades avanzadas de análisis.</p>
+<p>La arquitectura modular y el uso de buenas prácticas de programación permiten que este proyecto pueda expandirse y adaptarse a diferentes necesidades deportivas en el futuro.</p>
+<h2 id="autor">Autor</h2>
+<p>Agustín Carpenco - Máster en Python Avanzado Aplicado al Deporte</p>
+
+</body>
+</html>

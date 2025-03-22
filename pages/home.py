@@ -34,7 +34,7 @@ layout = dbc.Container([
     # Espacio para mejor separación visual
     html.Div(className="mt-4 mb-4"),
     
-    # Tarjetas de navegación principales
+    # Tarjetas de navegación principales (Quitando Informes y Reportes)
     dbc.Row([
         # Performance
         dbc.Col([
@@ -64,7 +64,7 @@ layout = dbc.Container([
                     ], href="/performance", color="primary", className="w-100")
                 ])
             ], className="h-100 shadow")
-        ], width=12, md=6, lg=4, className="mb-4"),
+        ], width=12, md=6, className="mb-4 mx-auto"),
         
         # GPS
         dbc.Col([
@@ -94,75 +94,7 @@ layout = dbc.Container([
                     ], href="/gps", color="success", className="w-100")
                 ])
             ], className="h-100 shadow")
-        ], width=12, md=6, lg=4, className="mb-4"),
-        
-        # Reportes
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.Div([
-                        html.Div([
-                            html.I(className="fas fa-file-pdf fa-3x text-danger")
-                        ], className="rounded-circle bg-light p-4 d-inline-flex mb-3 shadow-sm")
-                    ], className="text-center"),
-                    html.H4("Informes y Reportes", className="text-center mb-3"),
-                    html.P([
-                        "Generación de informes personalizados para entrenadores y equipo técnico."
-                    ], className="text-center mb-4"),
-                    html.Div([
-                        html.P([
-                            "• Exportación a PDF",
-                            html.Br(),
-                            "• Reportes por jugador y equipo",
-                            html.Br(),
-                            "• Resúmenes de partidos"
-                        ], className="small text-muted mb-4 text-center"),
-                    ]),
-                    dbc.Button([
-                        "Ver Reportes ",
-                        html.I(className="fas fa-arrow-right ms-1")
-                    ], href="#", color="danger", className="w-100")
-                ])
-            ], className="h-100 shadow")
-        ], width=12, md=6, lg=4, className="mb-4"),
-    ]),
-    
-    # Sección de acceso rápido
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardHeader([
-                    html.H5("Accesos Rápidos", className="mb-0")
-                ], className="bg-light"),
-                dbc.CardBody([
-                    dbc.Row([
-                        # Último partido
-                        dbc.Col([
-                            dbc.Button([
-                                html.I(className="fas fa-futbol me-2"),
-                                "Último Partido"
-                            ], color="primary", outline=True, className="w-100 mb-2")
-                        ], width=12, sm=6, md=4, className="mb-3"),
-                        
-                        # Comparar divisiones
-                        dbc.Col([
-                            dbc.Button([
-                                html.I(className="fas fa-users me-2"),
-                                "Comparar Divisiones"
-                            ], color="success", outline=True, className="w-100 mb-2")
-                        ], width=12, sm=6, md=4, className="mb-3"),
-                        
-                        # Exportar datos
-                        dbc.Col([
-                            dbc.Button([
-                                html.I(className="fas fa-download me-2"),
-                                "Exportar Datos"
-                            ], color="info", outline=True, className="w-100 mb-2")
-                        ], width=12, sm=6, md=4, className="mb-3"),
-                    ])
-                ])
-            ], className="shadow-sm mb-4")
-        ], width={"size": 10, "offset": 1})
+        ], width=12, md=6, className="mb-4 mx-auto"),
     ]),
     
     # Footer con información adicional

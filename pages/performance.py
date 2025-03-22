@@ -525,8 +525,8 @@ layout = dbc.Container([
                                 id="perf-export-pdf-btn", # Cambiar el ID para que sea único
                                 color="danger",
                                 className="w-100"
-),
-dcc.Download(id="perf-download-pdf")
+                                ),
+                                dcc.Download(id="perf-download-pdf")
                             ], md=3, className="mb-2")
                         ]),
                     ])
@@ -636,11 +636,11 @@ dcc.Download(id="perf-download-pdf")
                 dbc.CardBody([
                     html.Div([
                         html.Div(id="perf-analysis-loading", className="text-center", children=[
-    dbc.Spinner(size="sm", color="primary", type="grow"),
-    " Generando análisis... Por favor espere."
-], style={"display": "none"})
-
-html.Div(id="perf-analysis-content", className="mt-3")
+                            dbc.Spinner(size="sm", color="primary", type="grow"),
+                            " Generando análisis... Por favor espere."
+                        ], style={"display": "none"}),
+                        html.Div(id="perf-analysis-content", className="mt-3")
+                    ])
                 ])
             ])
         ], md=12, className="mb-4")
